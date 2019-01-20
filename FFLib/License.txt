@@ -1,0 +1,8 @@
+﻿/*******************************************************
+ * FFLib V1.1
+ * Author: Fast Forward,LLC
+ * Copyright © 2012 Fast Forward, LLC. 
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * You may use any component of FFLib under the terms of either the MIT License or the GNU General Public License (GPL) Version 2 exclusively.
+ * Notification is not required.
+********************************************************/

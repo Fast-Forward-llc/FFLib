@@ -1,0 +1,15 @@
+# Do not track these files
+*.exe
+*.cache
+*.user
+*.tlog
+*.vshost.exe.manifest
+*/debug/*
+*/obj/*
+*/bin/*
+*/packages/*
+/packages/*
+/*.suo
+/FFLib/*.suo
+/.vs/FFLib/v15/.suo
+/.vs/FFLib/v15/Server/sqlite3
