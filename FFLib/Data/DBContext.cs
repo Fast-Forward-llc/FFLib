@@ -147,16 +147,8 @@ namespace FFLib.Data
 
         static private bool IsNullOrWhiteSpace(string str)
         {
-#if CLR_V2
-#if CLR_V4
-#error You can't define CLR_V2 and CLR_V4 at the same time
-#endif
-            return @string.IsNullOrWhiteSpace(str);
-#elif CLR_V4    
+  
                 return string.IsNullOrWhiteSpace(str);
-#else
-#error Define either CLR_V2 or CLR_V4 to compile
-#endif
         }
 
         private bool isDisposed = false;

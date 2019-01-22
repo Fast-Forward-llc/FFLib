@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Transactions;
+//using System.Transactions;
 using FFLib.Data.DBProviders;
 
 namespace FFLib.Data
@@ -48,7 +48,7 @@ namespace FFLib.Data
         {
             if (_conn.State == System.Data.ConnectionState.Open) return;
             _conn.Open();
-            if (System.Transactions.Transaction.Current != null) _trxCnt++;
+            //if (System.Transactions.Transaction.Current != null) _trxCnt++;
         }
 
         public void Close()

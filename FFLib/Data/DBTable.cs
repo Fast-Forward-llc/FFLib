@@ -26,6 +26,8 @@ namespace FFLib.Data
     public interface IDBTable<T> where T : class, new()
     {
         T Load(int ID);
+        T Load<P>(P ID);
+        T[] Load<P>(P[] ID);
         T[] Load(string sql,SqlParameter[] SqlParams);
         T[] Load(string SqlText, SqlMacro[] SqlMacros);
         T[] Load(string SqlText, SqlMacro[] SqlMacros, SqlParameter[] SqlParams);
@@ -130,8 +132,23 @@ namespace FFLib.Data
         /// <returns>object instance of record or new empty instance (using parameterless contructor). Never returns null.</returns>
         public virtual T Load(int ID)
         {
-            string sqlText = this.ParseSql("SELECT * FROM #__TableName WHERE #__PK = @id");
+            string sqlText = this.ParseSql("SELECT TOP 1 * FROM #__TableName WHERE #__PK = @id");
             SqlParameter id = new SqlParameter("@id", ID);
+            T[] rows = this.Load(sqlText, new SqlParameter[] { id });
+            if (rows == null || rows.Length == 0) return new T();
+            return rows[0];
+        }
+
+        /// <summary>
+        /// Loads a single object by it's PK Id value. if not found an new empty object will be returned.
+        /// </summary>
+        /// <typeparam name="priKeyType">Primary key data type</typeparam>
+        /// <param name="pkid">PK Id to load</param>
+        /// <returns>object instance of record or new empty instance (using parameterless contructor). Never returns null.</returns>
+        public virtual T Load<priKeyType>(priKeyType pkid)
+        {
+            string sqlText = this.ParseSql("SELECT TOP 1 * FROM #__TableName WHERE #__PK = @id");
+            SqlParameter id = new SqlParameter("@id", pkid);
             T[] rows = this.Load(sqlText, new SqlParameter[] { id });
             if (rows == null || rows.Length == 0) return new T();
             return rows[0];
@@ -318,17 +335,17 @@ namespace FFLib.Data
             return this.Load(sql, new SqlMacro[]{pk}, null);
         }
 
-        /// <summary>
-        /// Loads an array of objects whose Primary keys are in idList. 
-        /// </summary>
-        /// <param name="idList">Array of Id's to load</param>
-        /// <returns></returns>
-        public virtual T[] Load(int[] idList)
-        {
-            SqlMacro pk = new SqlMacro(SqlMacro.MacroTypes.Keyword, "pk", string.Join(",", idList));
-            string sql = "SELECT * FROM #__TableName WHERE #__PK in (" + pk.Token + ")";
-            return this.Load(sql, new SqlMacro[] { pk }, null);
-        }
+        ///// <summary>
+        ///// Loads an array of objects whose Primary keys are in idList. 
+        ///// </summary>
+        ///// <param name="idList">Array of Id's to load</param>
+        ///// <returns></returns>
+        //public virtual T[] Load(int[] idList)
+        //{
+        //    SqlMacro pk = new SqlMacro(SqlMacro.MacroTypes.Keyword, "pk", string.Join(",", idList));
+        //    string sql = "SELECT * FROM #__TableName WHERE #__PK in (" + pk.Token + ")";
+        //    return this.Load(sql, new SqlMacro[] { pk }, null);
+        //}
 
         /// <summary>
         /// Load Associative List.
