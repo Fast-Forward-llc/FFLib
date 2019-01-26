@@ -22,7 +22,7 @@
     "content": [
       {
         "files": [
-          "api/**.yml"
+          "**.yml"
         ],
         "cwd": "obj"
       },
