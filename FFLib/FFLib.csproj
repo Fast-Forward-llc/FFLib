@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net40;net45;net46</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Version>1.2.1</Version>
+    <Version>1.2.1.1</Version>
     <Authors>Phil Bird</Authors>
     <Company>Fast Forward, LLC</Company>
     <Copyright>2018 Fast Forward, LLC</Copyright>

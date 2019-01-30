@@ -21,7 +21,7 @@ namespace FFLib.Data
 
     public class DBConnection : IDBConnection
     {
-        System.Data.IDbConnection  _conn;
+        System.Data.IDbConnection _conn;
         FFLib.Data.DBProviders.IDBProvider _dbProvider;
         DBTransaction _trx;
         int _trxCnt = 0;
@@ -80,16 +80,16 @@ namespace FFLib.Data
         }
         public DBTransaction BeginTransaction()
         {
-            #if (SQLDebug) 
+#if (SQLDebug)
                 System.Diagnostics.Debug.Write("Begin Transaction : "); 
-            #endif
+#endif
 
             if (_conn.State == System.Data.ConnectionState.Closed) _conn.Open();
             if (_trx == null) _trx = new DBTransaction(_conn.BeginTransaction(), this);
             _trxCnt++;
-            #if (SQLDebug) 
+#if (SQLDebug)
                   System.Diagnostics.Debug.WriteLine(_trx.GetHashCode());
-            #endif
+#endif
 
             return _trx;
         }
@@ -106,15 +106,15 @@ namespace FFLib.Data
 
         public void Commit()
         {
-            #if (SQLDebug) 
+#if (SQLDebug)
                  System.Diagnostics.Debug.Write("Commit Transaction : ");
-            #endif
+#endif
 
             if (_trx == null) { _trxCnt = 0; return; }
-            if (_trxCnt == 1)_trx.Transaction.Commit();
-            #if (SQLDebug) 
+            if (_trxCnt == 1) _trx.Transaction.Commit();
+#if (SQLDebug)
                  System.Diagnostics.Debug.Write(_trx.GetHashCode());
-            #endif
+#endif
 
             if (_trxCnt > 0) _trxCnt--;
             if (_trxCnt < 1) _trx = null;
@@ -122,14 +122,14 @@ namespace FFLib.Data
 
         public void Rollback()
         {
-            #if (SQLDebug) 
+#if (SQLDebug)
                  System.Diagnostics.Debug.Write("Commit Transaction : ");
-            #endif
+#endif
             if (_trx == null) { _trxCnt = 0; return; }
             _trx.Transaction.Rollback();
-            #if (SQLDebug) 
+#if (SQLDebug)
                  System.Diagnostics.Debug.Write(_trx.GetHashCode());
-            #endif
+#endif
             _trxCnt = 0;
             _trx = null;
         }
@@ -163,7 +163,7 @@ namespace FFLib.Data
 
         public System.Data.IDbCommand CreateCommand(string CmdText)
         {
-            System.Data.IDbCommand sqlCmd = _dbProvider.CreateCommand(_conn,CmdText);
+            System.Data.IDbCommand sqlCmd = _dbProvider.CreateCommand(_conn, CmdText);
             sqlCmd.Connection = _conn;
             sqlCmd.CommandTimeout = this.CommandTimeout;
             if (InTrx) sqlCmd.Transaction = (System.Data.SqlClient.SqlTransaction)_trx.Transaction;
@@ -183,12 +183,13 @@ namespace FFLib.Data
         }
         protected virtual void Dispose(bool disposing)
         {
-            if(!isDisposed)
+            if (!isDisposed)
             {
                 if (disposing)
                 {
-                if (_trx != null) { _trx.Dispose(); _trx = null; }
-                if (_conn != null) { _conn.Dispose(); _conn = null; }
+                    _trxCnt = 0;
+                    if (_trx != null) { _trx.Dispose(); _trx = null; }
+                    if (_conn != null) { _conn.Dispose(); _conn = null; }
                 }
             }
             // Code to dispose the unmanaged resources
@@ -196,11 +197,11 @@ namespace FFLib.Data
             _trx = null;
             _conn = null;
             isDisposed = true;
-            
+
         }
         ~DBConnection()
         {
-            Dispose (false);
+            Dispose(false);
         }
     }
 
@@ -246,23 +247,20 @@ namespace FFLib.Data
         }
         protected virtual void Dispose(bool disposing)
         {
-            if(!isDisposed)
+            if (!isDisposed)
             {
                 if (disposing)
                 {
-                if (_trx != null) { _trx.Dispose(); _trx = null; }
+                    if (_trx != null)
+                        if (_conn == null) { _trx.Dispose(); _trx = null; }
+                        else
+                        if (!_conn.InTrx) { _trx.Dispose(); _trx = null; }
                 }
             }
-            // Code to dispose the unmanaged resources
-            // held by the class
-            _trx = null;
-            _conn = null;
-            isDisposed = true;
-            
         }
         ~DBTransaction()
         {
-            Dispose (false);
+            Dispose(false);
         }
     }
 }
